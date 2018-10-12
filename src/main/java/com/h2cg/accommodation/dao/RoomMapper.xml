@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.h2cg.accommodation.dao.RoomDAO">
+	<resultMap id="BaseResultMap" type="com.h2cg.accommodation.dto.RoomDTO">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="adv_id" jdbcType="INTEGER" property="advId" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="rental" jdbcType="DOUBLE" property="rental" />
+		<result column="max_people" jdbcType="INTEGER" property="maxPeople" />
+		<result column="description" jdbcType="VARCHAR" property="description" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, adv_id, name, rental, max_people, description
+	</sql>
+	<select id="selectAvailableRoom" resultMap="BaseResultMap"
+		parameterType="com.h2cg.accommodation.dto.BookDTO">
+		SELECT * FROM ROOM r WHERE r.adv_id = #{
+		room.adv.id,jdbcType=INTEGER} and r.id not IN (SELECT b.room_id
+		FROM BOOK b LEFT JOIN
+		ROOM r ON r.id = b.room_id WHERE r.adv_id = #{
+		room.adv.id,jdbcType=INTEGER} and b.stay_end &gt;=
+		#{stayBegin,jdbcType=TIMESTAMP} and b.stay_begin &lt;= #{stayEnd,jdbcType=TIMESTAMP} GROUP BY b.room_id
+		)
+	</select>
+	<insert id="insert" parameterType="com.h2cg.accommodation.dto.RoomDTO" keyProperty="id" useGeneratedKeys="true">
+		insert into ROOM (id, adv_id, name,
+		rental, max_people,
+		description
+		)
+		values (#{id,jdbcType=INTEGER}, #{advId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{rental,jdbcType=DOUBLE}, #{maxPeople,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.h2cg.accommodation.dto.RoomDTO" keyProperty="id" useGeneratedKeys="true">
+		insert into ROOM
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="advId != null">
+				adv_id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="rental != null">
+				rental,
+			</if>
+			<if test="maxPeople != null">
+				max_people,
+			</if>
+			<if test="description != null">
+				description,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="advId != null">
+				#{advId,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="rental != null">
+				#{rental,jdbcType=DOUBLE},
+			</if>
+			<if test="maxPeople != null">
+				#{maxPeople,jdbcType=INTEGER},
+			</if>
+			<if test="description != null">
+				#{description,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<select id="selectRoomById" resultMap="BaseResultMap"
+		parameterType="com.h2cg.accommodation.dto.AdvertiseDTO">
+		select * from ROOM where adv_id = #{id} 
+	</select>
+	<delete id="deleteById" parameterType="com.h2cg.accommodation.dto.AdvertiseDTO">
+		delete from ROOM where adv_id = #{id}
+	</delete>
+</mapper>

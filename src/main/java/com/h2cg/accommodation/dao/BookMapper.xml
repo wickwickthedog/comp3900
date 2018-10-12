@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.h2cg.accommodation.dao.BookDAO">
+
+
+	<resultMap id="BaseResultMap" type="com.h2cg.accommodation.dto.BookDTO">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="user_id" jdbcType="INTEGER" property="userId" />
+		<result column="room_id" jdbcType="INTEGER" property="roomId" />
+		<result column="status" jdbcType="INTEGER" property="status" />
+		<result column="stay_begin" jdbcType="TIMESTAMP" property="stayBegin" />
+		<result column="stay_end" jdbcType="TIMESTAMP" property="stayEnd" />
+		<result column="booktime" jdbcType="TIMESTAMP" property="booktime" />
+		<result column="habit" jdbcType="VARCHAR" property="habit" />
+		<result column="expectation" jdbcType="VARCHAR" property="expectation" />
+		<association property="room" column="room_id" javaType="com.h2cg.accommodation.dto.RoomDTO">
+			<id property="id" column="room_id" />
+			<result property="name" column="name" />
+			<result property="rental" column="rental" />
+			<result property="maxPeople" column="max_people" />
+			<result property="decription" column="decription" />
+			<association property="adv" column="adv_id" javaType="com.h2cg.accommodation.dto.AdvertiseDTO">
+				<id property="id" column="advId" />
+				<result column="user_id" jdbcType="INTEGER" property="userId" />
+				<result column="title" jdbcType="VARCHAR" property="title" />
+				<result column="description" jdbcType="VARCHAR" property="description" />
+				<result column="state" jdbcType="VARCHAR" property="state" />
+				<result column="city" jdbcType="VARCHAR" property="city" />
+				<result column="suburb" jdbcType="VARCHAR" property="suburb" />
+				<result column="address" jdbcType="VARCHAR" property="address" />
+				<result column="zipcode" jdbcType="INTEGER" property="zipcode" />
+				<result column="pic_path" jdbcType="VARCHAR" property="picPath" />
+				<result column="longitude" jdbcType="DOUBLE" property="longitude" />
+				<result column="latitude" jdbcType="DOUBLE" property="latitude" />
+				<result column="time" jdbcType="TIMESTAMP" property="time" />
+				<result column="bedroom" jdbcType="INTEGER" property="bedroom" />
+				<result column="bathroom" jdbcType="INTEGER" property="bathroom" />
+				<result column="max_people" jdbcType="INTEGER" property="maxPeople" />
+				<result column="adv_type" jdbcType="VARCHAR" property="advType" />
+				<result column="property_type" jdbcType="VARCHAR" property="propertyType" />
+			</association>
+		</association>
+		<association property="user" column="user_id" javaType="com.h2cg.accommodation.dto.UsersDTO">
+			<id column="id" jdbcType="INTEGER" property="id" />
+			<result column="user_name" jdbcType="VARCHAR" property="userName" />
+			<result column="pwd" jdbcType="VARCHAR" property="pwd" />
+			<result column="email" jdbcType="VARCHAR" property="email" />
+			<result column="time" jdbcType="TIMESTAMP" property="time" />
+			<result column="pic_dir" jdbcType="VARCHAR" property="picDir" />
+			<result column="valid" jdbcType="INTEGER" property="valid" />
+			<result column="gender" jdbcType="VARCHAR" property="gender" />
+			<result column="dob" jdbcType="VARCHAR" property="dob" />
+		</association>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, user_id, room_id, status, stay_begin, stay_end,
+		booktime, habit, expectation
+	</sql>
+
+	<select id="selectHousemate" resultMap="BaseResultMap" parameterType="com.h2cg.accommodation.dto.BookDTO">
+		SELECT b.habit,
+		b.expectation, b.stay_begin, b.stay_end,
+		r.`name`, u.user_name
+		FROM
+		`BOOK` b LEFT JOIN
+		ROOM r on
+		b.room_id = r.id
+		LEFT JOIN ADVERTISE a on r.adv_id = a.id LEFT JOIN
+		USERS u on b.user_id
+		=
+		u.id
+		WHERE a.id = #{room.adv.id,jdbcType=INTEGER} and b.stay_end &gt;=
+		#{stayBegin,jdbcType=TIMESTAMP} and b.stay_begin &lt;=
+		#{stayEnd,jdbcType=TIMESTAMP}
+	</select>
+
+	<select id="selectBookingBeforeCheckIn" resultMap="BaseResultMap" parameterType="com.h2cg.accommodation.dto.BookDTO">
+		SELECT b.stay_begin,b.stay_end,a.title,r.`name`,b.habit,b.expectation,b.id as id,a.id as advId FROM
+		`BOOK` b LEFT
+		join ROOM r on b.room_id = r.id LEFT JOIN ADVERTISE a on
+		r.adv_id = a.id
+		WHERE b.user_id = #{userId,jdbcType=INTEGER}
+		and
+		stay_begin &gt;= #{today,jdbcType=TIMESTAMP}
+		ORDER BY stay_begin
+	</select>
+	<select id="selectBookingAfterCheckIn" resultMap="BaseResultMap" parameterType="com.h2cg.accommodation.dto.BookDTO">
+		SELECT b.stay_begin,b.stay_end,a.title,r.`name`,b.habit,b.expectation,b.id as id,a.id as advId FROM
+		`BOOK` b LEFT
+		join ROOM r on b.room_id = r.id LEFT JOIN ADVERTISE a on
+		r.adv_id = a.id
+		WHERE b.user_id = #{userId,jdbcType=INTEGER}
+		and
+		stay_begin &lt;= #{today,jdbcType=TIMESTAMP}
+		ORDER BY stay_begin
+	</select>
+	<insert id="insert" parameterType="com.h2cg.accommodation.dto.BookDTO">
+		insert into BOOK (id, user_id, room_id, stay_begin,
+		stay_end,
+		booktime, habit, expectation
+		)
+		values (#{id,jdbcType=INTEGER},
+		#{userId,jdbcType=INTEGER},
+		#{roomId,jdbcType=INTEGER},
+		#{stayBegin,jdbcType=TIMESTAMP},
+		#{stayEnd,jdbcType=TIMESTAMP},
+		#{booktime,jdbcType=TIMESTAMP}, #{habit,jdbcType=VARCHAR},
+		#{expectation,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.h2cg.accommodation.dto.BookDTO">
+		insert into BOOK
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="roomId != null">
+				room_id,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="stayBegin != null">
+				stay_begin,
+			</if>
+			<if test="stayEnd != null">
+				stay_end,
+			</if>
+			<if test="booktime != null">
+				booktime,
+			</if>
+			<if test="habit != null">
+				habit,
+			</if>
+			<if test="expectation != null">
+				expectation,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="roomId != null">
+				#{roomId,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=INTEGER},
+			</if>
+			<if test="stayBegin != null">
+				#{stayBegin,jdbcType=TIMESTAMP},
+			</if>
+			<if test="stayEnd != null">
+				#{stayEnd,jdbcType=TIMESTAMP},
+			</if>
+			<if test="booktime != null">
+				#{booktime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="habit != null">
+				#{habit,jdbcType=VARCHAR},
+			</if>
+			<if test="expectation != null">
+				#{expectation,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<delete id="deleteBooking" parameterType="java.lang.Integer">
+		delete from BOOK
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+</mapper>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.h2cg.accommodation.dao.UsersDAO">
+
+	<resultMap id="BaseResultMap" type="com.h2cg.accommodation.dto.UsersDTO">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="user_name" jdbcType="VARCHAR" property="userName" />
+		<result column="pwd" jdbcType="VARCHAR" property="pwd" />
+		<result column="email" jdbcType="VARCHAR" property="email" />
+		<result column="time" jdbcType="TIMESTAMP" property="time" />
+		<result column="pic_dir" jdbcType="VARCHAR" property="picDir" />
+		<result column="valid" jdbcType="INTEGER" property="valid" />
+		<result column="gender" jdbcType="VARCHAR" property="gender" />
+		<result column="dob" jdbcType="VARCHAR" property="dob" />
+	</resultMap>
+
+
+	<!-- <sql id="Base_Column_List"> ID, EMAILADDR, PASSWORD,NAME,GENDER,DOB,BAN </sql> -->
+
+	<select id="selectByName" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from USERS
+		where user_name = #{userName,jdbcType=VARCHAR}
+	</select>
+	<select id="selectByNameAndPassword" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from USERS
+		where USER_NAME = #{userName,jdbcType=VARCHAR}
+		and PWD =
+		#{pwd,jdbcType=VARCHAR} and valid = 1
+	</select>
+	<select id="countUser" resultType="Integer" parameterType="com.h2cg.accommodation.dto.UsersDTO">
+		select
+		count(*)
+		from USERS
+		<where>
+			<if test="id != null">
+				ID = #{id,jdbcType=INTEGER}
+			</if>
+			<if test="userName != null and userName'' ">
+				and user_name like CONCAT('%',#{userName},'%')
+			</if>
+		</where>
+	</select>
+	<select id="selectByIdOrName" resultMap="BaseResultMap" parameterType="com.h2cg.accommodation.dto.UsersDTO">
+		select *
+		from USERS
+		<where>
+			<if test="id != null">
+				ID = #{id,jdbcType=INTEGER}
+			</if>
+			<if test="userName != null and userName'' ">
+				and user_name like CONCAT('%',#{userName},'%')
+			</if>
+		</where>
+		limit #{recordStart, jdbcType=INTEGER},#{pageSize, jdbcType=INTEGER}
+	</select>
+	<!-- <select id="selectUserActivity" resultMap="activityResuultMap" parameterType="com.h2cg.accommodation.dto.UsersDTO"> SELECT cast('joined the UNSWBook Website' as CHAR(30)) as activity, d.register_date 
+		as act_date,cast(null as CHAR(10)) as object FROM USERS d <where> <if test="id != null"> d.id = #{id,jdbcType=INTEGER} </if> </where> UNION SELECT cast('made friends with' as CHAR(30)) as activity, f.add_date 
+		as act_date, u.`name` as object FROM friends f LEFT JOIN USERS u on f.friend_id = u.id <where> <if test="id != null"> f.f_id = #{id,jdbcType=INTEGER} </if> </where> UNION SELECT cast('posted' as CHAR(30)) 
+		as activity, m.post_date as act_date, m.content as object FROM message m <where> <if test="id != null"> m.m_id = #{id,jdbcType=INTEGER} </if> </where> ORDER BY act_date </select> -->
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from USERS
+		where ID = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insert" parameterType="com.h2cg.accommodation.dto.UsersDTO">
+		insert into USERS (id, user_name, pwd,
+		email, time, pic_dir,
+		valid, gender, dob)
+		values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP}, #{picDir,jdbcType=VARCHAR},
+		#{valid,jdbcType=INTEGER}, #{gender,jdbcType=VARCHAR}, #{dob,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.h2cg.accommodation.dto.UsersDTO">
+		insert into USERS
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userName != null">
+				user_name,
+			</if>
+			<if test="pwd != null">
+				pwd,
+			</if>
+			<if test="email != null">
+				email,
+			</if>
+			<if test="time != null">
+				time,
+			</if>
+			<if test="picDir != null">
+				pic_dir,
+			</if>
+			<if test="valid != null">
+				valid,
+			</if>
+			<if test="gender != null">
+				gender,
+			</if>
+			<if test="dob != null">
+				dob,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="pwd != null">
+				#{pwd,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				#{email,jdbcType=VARCHAR},
+			</if>
+			<if test="time != null">
+				#{time,jdbcType=TIMESTAMP},
+			</if>
+			<if test="picDir != null">
+				#{picDir,jdbcType=VARCHAR},
+			</if>
+			<if test="valid != null">
+				#{valid,jdbcType=INTEGER},
+			</if>
+			<if test="gender != null">
+				#{gender,jdbcType=VARCHAR},
+			</if>
+			<if test="dob != null">
+				#{dob,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateByPrimaryKeySelective" parameterType="com.h2cg.accommodation.dto.UsersDTO">
+		update USERS
+		<set>
+			<if test="userName != null">
+				user_name = #{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="pwd != null">
+				pwd = #{pwd,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				email = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="gender != null">
+				gender = #{gender,jdbcType=VARCHAR},
+			</if>
+			<if test="dob != null">
+				dob = #{dob,jdbcType=TIMESTAMP},
+			</if>
+			<if test="valid != null">
+				valid = #{valid,jdbcType=INTEGER},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+
+	<update id="updateByPrimaryKey" parameterType="com.h2cg.accommodation.dto.UsersDTO">
+		update USERS
+		set
+		user_name = #{userName,jdbcType=VARCHAR},
+		PASSWORD =
+		#{password,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+
+
+</mapper>
