@@ -297,7 +297,7 @@ footer {
 			        <td class="iw_attribute_name">Address:</td>
 			        <td id="iw-address"></td>
 			      </tr>
-			      <tr id="iw-hours-row" class="iw_table_row">
+			      <!-- <tr id="iw-hours-row" class="iw_table_row">
 			        <td class="iw_attribute_name">Opening Hours:</td>
 			        <td id="iw-hours1"></td>
 			      </tr>
@@ -324,7 +324,7 @@ footer {
 			      <tr id="iw-hours-row" class="iw_table_row">
 			        <td class="iw_attribute_name"></td>
 			        <td id="iw-hours7"></td>
-			      </tr>
+			      </tr> -->
 			      <tr id="iw-price-row" class="iw_table_row">
 			        <td class="iw_attribute_name">Price:</td>
 			        <td id="iw-price"></td>
@@ -567,7 +567,7 @@ function buildIWContent(place) {
     document.getElementById('iw-price-row').style.display = 'none';
   }
   
-  if (place.opening_hours.periods) {
+  /* if (place.opening_hours.periods) {
 	    document.getElementById('iw-hours-row').style.display = '';
 	    document.getElementById('iw-hours1').textContent =
 	        "Monday " + place.opening_hours.periods[0].open.time + " - " + place.opening_hours.periods[0].close.time;
@@ -585,7 +585,7 @@ function buildIWContent(place) {
 	        "Sunday " + place.opening_hours.periods[6].open.time + " - " + place.opening_hours.periods[6].close.time;
   } else {
     document.getElementById('iw-hours-row').style.display = 'none';
-  }
+  } */
   // Assign a five-star rating to the hotel, using a black star ('&#10029;')
   // to indicate the rating the hotel has earned, and a white star ('&#10025;')
   // for the rating points not achieved.
