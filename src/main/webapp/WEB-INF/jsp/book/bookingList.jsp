@@ -127,7 +127,7 @@
 				$.post("postComment", {
 					bookId : id,
 					comment : comment,
-					rating : rating,
+					rating : rating
 				}, function(data) {
 					if (data.res == "success") {
 						$.messager.alert(data.title,data.msg);

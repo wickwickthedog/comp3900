@@ -1,6 +1,7 @@
 package com.h2cg.accommodation.service.impl;
 
 
+import java.text.ParseException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import com.h2cg.accommodation.dto.BookDTO;
 import com.h2cg.accommodation.dto.RoomDTO;
 //import com.ass2.dto.UserActivityDTO;
 import com.h2cg.accommodation.service.IRoomService;
+import com.h2cg.accommodation.utils.DateUtils;
 import com.h2cg.accommodation.utils.PhotoUtil;
 
 @Transactional
@@ -27,6 +29,16 @@ public class RoomService implements IRoomService{
 	@Override
 	public List<RoomDTO> selectAvailableRoom(BookDTO DTO,HttpServletRequest request) {
 		// TODO Auto-generated method stub
+		if (DTO.getStayBeginStr() != null && DTO.getStayBeginStr() != "") {
+			try {
+				DTO.setStayBegin(DateUtils.DateString2Date(DTO.getStayBeginStr()));
+				DTO.setStayEnd(DateUtils.DateString2Date(DTO.getStayEndStr()));
+
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		List<RoomDTO> roomList = roomDao.selectAvailableRoom(DTO);
 		String photoDir = "photo/"+ DTO.getId() + "/" ;
 		String pathval = request.getSession().getServletContext().getRealPath("/") + "WEB-INF/";

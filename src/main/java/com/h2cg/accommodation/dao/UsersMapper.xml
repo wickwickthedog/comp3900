@@ -8,7 +8,6 @@
 		<result column="pwd" jdbcType="VARCHAR" property="pwd" />
 		<result column="email" jdbcType="VARCHAR" property="email" />
 		<result column="time" jdbcType="TIMESTAMP" property="time" />
-		<result column="pic_dir" jdbcType="VARCHAR" property="picDir" />
 		<result column="valid" jdbcType="INTEGER" property="valid" />
 		<result column="gender" jdbcType="VARCHAR" property="gender" />
 		<result column="dob" jdbcType="VARCHAR" property="dob" />
@@ -66,10 +65,10 @@
 
 	<insert id="insert" parameterType="com.h2cg.accommodation.dto.UsersDTO">
 		insert into USERS (id, user_name, pwd,
-		email, time, pic_dir,
+		email, time, 
 		valid, gender, dob)
 		values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR},
-		#{email,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP}, #{picDir,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP}, 
 		#{valid,jdbcType=INTEGER}, #{gender,jdbcType=VARCHAR}, #{dob,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.h2cg.accommodation.dto.UsersDTO">
@@ -89,9 +88,6 @@
 			</if>
 			<if test="time != null">
 				time,
-			</if>
-			<if test="picDir != null">
-				pic_dir,
 			</if>
 			<if test="valid != null">
 				valid,
@@ -118,9 +114,6 @@
 			</if>
 			<if test="time != null">
 				#{time,jdbcType=TIMESTAMP},
-			</if>
-			<if test="picDir != null">
-				#{picDir,jdbcType=VARCHAR},
 			</if>
 			<if test="valid != null">
 				#{valid,jdbcType=INTEGER},

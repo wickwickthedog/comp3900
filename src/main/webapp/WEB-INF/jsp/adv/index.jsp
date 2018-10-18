@@ -111,6 +111,8 @@
 		</div>
 		<!-- About Area Start -->
 	</div>
+	<div id='result-list'>
+	</div>
 
 </body>
 <script>
@@ -159,6 +161,10 @@
 	function searchAdv() {
 		var inputCheckIn = $("#inputCheckIn").val();
 		var inputCheckOut = $("#inputCheckOut").val();
+		if(!compareDate(inputCheckIn,inputCheckOut)){
+			$.messager.alert("Warning",	"Your check-in date should be earlier than the check-out date.");
+			return ;
+		}
 		$("#searchAdvForm")
 				.ajaxSubmit(
 						{
@@ -166,6 +172,8 @@
 							url : "searchAdv", //请求url
 							success : function(data) { //提交成功的回调函数  
 								var advList = data.rows;
+								$("#result-list").empty();
+
 								for (var i = 0; i < data.total; i++) {
 									var adv = advList[i];
 									var html = "<div id='about-area' class='about-area section'><div class='container'><div class='row'><div class='col-xs-12'><div class='about-image float-left hidden-sm'>";
@@ -192,19 +200,41 @@
 											+ "</h2><p>Bathrooms</p></div><div class='single-funfact text-center'><h2 class='counter'>"
 											+ adv.maxPeople
 											+ "</h2><p>Capacity</p></div></div></div></div></div></div></div>";
-									$("#search-area").after(html);
+											$("#result-list").append(html);
+									scrollToLocation();
 								}
 							}
 						});
 	}
 	function scrollToLocation() {
-		var body = $("body");
-		var scroll_1 = $('#about-area');///滚动到<div id="thisMainPanel">中类名为son-panel的最后一个div处
-		if (scrollTo.length) {
-			body.animate({
-				scrollTop : scroll_1.offset().top - 100
-			}, 2000);
-		}
+
+		 var body = $('html,body');
+         var scroll_1 = $('#result-list');
+         if(scrollTo.length) {
+             body.animate({scrollTop:scroll_1.offset().top - 100 }, 2000);
+         }
+	}
+	function compareDate(date_1,date_2){
+ 		var str_1 = date_1.split('-');
+ 		var str_2 = date_2.split('-');
+ 		var day_1 = parseInt(str_1[0]);
+ 		var month_1 = parseInt(str_1[1]);
+ 		var year_1 = parseInt(str_1[2]);
+ 		var day_2 = parseInt(str_2[0]);
+ 		var month_2 = parseInt(str_2[1]);
+ 		var year_2 = parseInt(str_2[2]);
+		if(year_1>year_2){
+				return false;
+ 		}else{
+ 			if(year_1==year_2&&month_1>month_2){
+					return false;
+ 			}else{
+ 				if(year_1==year_2&&month_1==month_2&&day_1>day_2){
+ 					return false;
+ 				}
+ 			}
+ 		}
+		return true;
 	}
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbNm9Fz6RfDTbq_cGqlpbPvvi_R4u_Skc&libraries=places&callback=initMap"

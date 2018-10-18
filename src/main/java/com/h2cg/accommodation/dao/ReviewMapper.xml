@@ -47,7 +47,8 @@
 		`REVIEW` r
 		LEFT JOIN BOOK b ON r.book_id = b.id
 		LEFT JOIN ROOM rm ON rm.id = b.room_id
-		LEFT JOIN ADVERTISE a ON a.id = rm.adv_id
+		LEFT
+		JOIN ADVERTISE a ON a.id = rm.adv_id
 		LEFT JOIN USERS u ON u.id = b.user_id
 		WHERE
 		a.id = #{advId,jdbcType=INTEGER}
@@ -75,6 +76,9 @@
 			<if test="time != null">
 				time,
 			</if>
+			<if test="rating != null">
+				rating,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -88,6 +92,9 @@
 			</if>
 			<if test="time != null">
 				#{time,jdbcType=TIMESTAMP},
+			</if>
+			<if test="rating != null">
+				#{rating,jdbcType=INTEGER},
 			</if>
 		</trim>
 	</insert>

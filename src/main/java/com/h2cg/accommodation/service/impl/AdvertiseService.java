@@ -1,7 +1,9 @@
 package com.h2cg.accommodation.service.impl;
 
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,7 @@ import com.h2cg.accommodation.dto.BookDTO;
 import com.h2cg.accommodation.dto.UsersDTO;
 import com.h2cg.accommodation.service.IAdvertiseService;
 import com.h2cg.accommodation.service.IUserService;
+import com.h2cg.accommodation.utils.DateUtils;
 import com.h2cg.accommodation.utils.PhotoUtil;
 import com.h2cg.accommodation.utils.SendEmail;
 
@@ -31,8 +34,19 @@ public class AdvertiseService implements IAdvertiseService{
 	@Override
 	public List<AdvertiseDTO> selectAdv(BookDTO bookDto,HttpServletRequest request) {
 		// TODO Auto-generated method stub
+		if (bookDto.getStayBeginStr() != null && bookDto.getStayBeginStr() != "") {
+			try {
+				bookDto.setStayBegin(DateUtils.DateString2Date(bookDto.getStayBeginStr()));
+				bookDto.setStayEnd(DateUtils.DateString2Date(bookDto.getStayEndStr()));
+
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		List<AdvertiseDTO> advList =advertiseDao.selectAdv(bookDto);
 		String pathval = request.getSession().getServletContext().getRealPath("/") + "WEB-INF/";
+		
 		for(AdvertiseDTO adv:advList) {
 			String photoDir = "photo/"+ adv.getId() + "/" ;
 			ArrayList<String> picList = PhotoUtil.getPhotoPath(pathval + photoDir,photoDir);
@@ -54,6 +68,8 @@ public class AdvertiseService implements IAdvertiseService{
 	@Override
 	public int addAdv(AdvertiseDTO advDto) {
 		// TODO Auto-generated method stub
+		advDto.setTime(new Date());
+
 		return advertiseDao.insertSelective(advDto);
 	}
 

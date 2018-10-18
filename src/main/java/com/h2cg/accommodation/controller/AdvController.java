@@ -104,7 +104,10 @@ public class AdvController extends BaseController {
 		List<ReviewDTO> reviewList =reviewService.selectByAdvId(advDto.getId());
 		float avgRating =0;
 		for(ReviewDTO review:reviewList) {
-			avgRating += review.getRating();
+			if(review.getRating()!=null) {
+
+				avgRating += review.getRating();
+			}
 		}
 		if(reviewList.size()>0) {
 			avgRating = avgRating/reviewList.size();

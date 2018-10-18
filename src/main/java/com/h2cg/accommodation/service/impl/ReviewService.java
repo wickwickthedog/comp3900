@@ -34,6 +34,8 @@ public class ReviewService implements IReviewService {
 	@Override
 	public int insertComment(ReviewDTO review) {
 		// TODO Auto-generated method stub
+		review.setTime(new Date());
+
 		return reviewDao.insertSelective(review);
 	}
 
