@@ -79,7 +79,7 @@
 		<if test="room.adv.advType != null and room.adv.advType !='' ">
 			and adv_type like #{room.adv.advType}
 		</if>
-		 GROUP BY a.id ORDER BY MIN(r.rental) desc
+		 GROUP BY a.id ORDER BY MIN(r.rental) asc
 
 
 	</select>

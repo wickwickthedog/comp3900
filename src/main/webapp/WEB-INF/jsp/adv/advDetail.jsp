@@ -731,7 +731,7 @@ footer {
 		$.messager
 				.confirm(
 						"Comfirmation",
-						"Are you sure to book this room from ${bookDto.stayBeginStr} to ${bookDto.stayEndStr}?",
+						"Are you sure to book this room from "+stayFrom+" to "+stayTo+"?",
 						function(mes) {
 							if (mes) {
 								$
