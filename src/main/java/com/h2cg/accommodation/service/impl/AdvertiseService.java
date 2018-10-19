@@ -103,6 +103,23 @@ public class AdvertiseService implements IAdvertiseService{
 		return advertiseDao.updateRmNum(advId,bedroom, capacity);
 	}
 
+	@Override
+	public List<AdvertiseDTO> selectAdvByAddress(BookDTO bookDto,HttpServletRequest request) {
+		// TODO Auto-generated method stub
+		List<AdvertiseDTO> advList =advertiseDao.selectAdvByAddress(bookDto);
+		String pathval = request.getSession().getServletContext().getRealPath("/") + "WEB-INF/";
+		
+		for(AdvertiseDTO adv:advList) {
+			String photoDir = "photo/"+ adv.getId() + "/" ;
+			ArrayList<String> picList = PhotoUtil.getPhotoPath(pathval + photoDir,photoDir);
+			if(picList.size()>0) {
+				adv.setPicPath(picList.remove(0));
+			}
+
+		}
+		return advList;
+	}
+
 //	@Override
 //	public AdvertiseDTO selectAdvByUId(UsersDTO userDto) {
 //		// TODO Auto-generated method stub

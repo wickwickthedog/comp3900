@@ -57,17 +57,14 @@ public class AdvController extends BaseController {
 
 	@RequestMapping("/toSearchAdv")
 	public String toSearchUser2(Model model, @ModelAttribute AdvertiseDTO advDto) {
-//		List<AdvertiseDTO> advList = advService.selectAdv(advDto);
-//		model.addAttribute("advList", advList);
+
 		return "adv/searchAdvView";
 	}
 
 	@RequestMapping("/toAdvDetail")
 	public String toUserProfile(@ModelAttribute AdvertiseDTO advDto, @ModelAttribute("bookDto") BookDTO bookDto,
 			@ModelAttribute RoomDTO roomDto, Model model, HttpServletRequest request) throws ParseException {
-//		user.setPageSize(1);
-//		user = userService.searchUserByIdOrName(user).get(0);
-//		Date OStime = sdf.parse(time);
+
 		if (bookDto.getStayBeginStr() != null && bookDto.getStayBeginStr() != "") {
 			bookDto.setStayBegin(DateUtils.DateString2Date(bookDto.getStayBeginStr()));
 			bookDto.setStayEnd(DateUtils.DateString2Date(bookDto.getStayEndStr()));
@@ -80,7 +77,6 @@ public class AdvController extends BaseController {
 		RoomDTO room = new RoomDTO();
 		room.setAdv(advDto);
 		bookDto.setRoom(room);
-//		List<RoomDTO> roomList = roomService.selectAvailableRoom(bookDto);
 
 		List<BookDTO> housemateList = bookService.selectHousemate(bookDto);
 		model.addAttribute("advDto", advDto);
@@ -89,29 +85,18 @@ public class AdvController extends BaseController {
 			model.addAttribute("advPhotoList", advPhotoList);
 		}
 		model.addAttribute("bookDto", bookDto);
-//		if (roomList.size() > 0) {
-//			model.addAttribute("roomList", roomList);
-////			for (RoomDTO rm : roomList) {
-//////				ArrayList<String> roomPhotoList = getPhotoPath(
-////						pathval + photoDir + "/" + rm.getId() + "/" + advDto.getId());
-////				if (roomPhotoList.size() > 0) {
-////					model.addAttribute("roomPhotoCover" + rm.getId(), roomPhotoList.get(0));
-////					model.addAttribute(rm.getId().toString(), roomPhotoList);
-////				}
-////			}
-//		}
 		model.addAttribute("housemateList", housemateList);
-		List<ReviewDTO> reviewList =reviewService.selectByAdvId(advDto.getId());
-		float avgRating =0;
-		for(ReviewDTO review:reviewList) {
-			if(review.getRating()!=null) {
+		List<ReviewDTO> reviewList = reviewService.selectByAdvId(advDto.getId());
+		float avgRating = 0;
+		for (ReviewDTO review : reviewList) {
+			if (review.getRating() != null) {
 
 				avgRating += review.getRating();
 			}
 		}
-		if(reviewList.size()>0) {
-			avgRating = avgRating/reviewList.size();
-			
+		if (reviewList.size() > 0) {
+			avgRating = avgRating / reviewList.size();
+
 		}
 		String avgRatingStr = String.format("%.1f", avgRating);
 
@@ -124,22 +109,7 @@ public class AdvController extends BaseController {
 	@RequestMapping("/toIndex")
 	public String toIndex(@ModelAttribute("bookDto") BookDTO bookDto, @ModelAttribute UsersDTO user, Model model,
 			HttpSession session) throws ParseException {
-//		List<AdvertiseDTO> advDto = advService.selectAdv(new AdvertiseDTO());
-//		model.addAttribute("advDto", advDto);
-//		Date OStime = sdf.parse(time);
 
-//		model.addAttribute("scrollFlag", 0);
-//		if (bookDto.getStayBeginStr() != null && bookDto.getStayEndStr() != null) {
-//			bookDto.setStayBegin(DateUtils.DateString2Date(bookDto.getStayBeginStr()));
-//			bookDto.setStayBegin(DateUtils.DateString2Date(bookDto.getStayEndStr()));
-//			List<AdvertiseDTO> advList = advService.selectAdv(bookDto);
-//			model.addAttribute("advList", advList);
-//			model.addAttribute("book", bookDto);
-//			model.addAttribute("scrollFlag", 1);
-//		}
-//		user = (UsersDTO) session.getAttribute("userSession");
-//		if (user != null)
-//			model.addAttribute("user", user);
 		return "adv/index";
 	}
 
@@ -189,8 +159,15 @@ public class AdvController extends BaseController {
 			Model model) throws Exception {
 		// RequestContext requestContext = new RequestContext(request);
 		String res = "success";
-		List<AdvertiseDTO> advList = advService.selectAdv(bookDto, request);
-//		model.addAttribute("advList", advList);
+		List<AdvertiseDTO> advList ;
+		if (bookDto.getStayBeginStr() == null || bookDto.getStayEndStr() == null
+				|| bookDto.getRoom().getAdv().getMaxPeople() == null
+				|| bookDto.getRoom().getAdv().getBedroom() == null) {
+			advList = advService.selectAdvByAddress(bookDto, request);
+		} else {
+
+			advList = advService.selectAdv(bookDto, request);
+		}
 
 		if (advList.size() == 0 || advList == null) {
 			res = "failed";
@@ -203,17 +180,13 @@ public class AdvController extends BaseController {
 	@RequestMapping(value = "searchRoom", method = RequestMethod.POST)
 	public Map<String, Object> searchRoom(HttpServletRequest request, @ModelAttribute("bookDto") BookDTO bookDto,
 			Model model) throws Exception {
-		// RequestContext requestContext = new RequestContext(request);
 		String res = "success";
-//		Map<String, String> result = new HashMap<String, String>();;
 		RoomDTO room = new RoomDTO();
 		AdvertiseDTO adv = new AdvertiseDTO();
 		adv.setId(bookDto.getId());
 		room.setAdv(adv);
 		bookDto.setRoom(room);
-		// int total = userService.countUser(userDTO);
 		List<RoomDTO> roomList = roomService.selectAvailableRoom(bookDto, request);
-//		List<UserActivityDTO> userActList = userService.searchUserActivity(userDTO);
 		if (roomList.size() == 0 || roomList == null) {
 			res = "failed";
 		}
@@ -254,8 +227,6 @@ public class AdvController extends BaseController {
 			advDto.setUserId(userUi.getId());
 			Integer id = advService.addAdv(advDto);
 			if (id > 0) {
-//				String realUploadPath=request.getServletContext().getRealPath("/")+"WEB-INF/photo/"+advDto.getId()+"/";				
-//				String b=this.getClass().getClassLoader().getResource(".").getPath();
 				String pathval = request.getSession().getServletContext().getRealPath("/") + "WEB-INF/" + photoDir
 						+ advDto.getId() + "/";
 //				String currentDir = photoDir+advDto.getId()+"/";
@@ -273,7 +244,6 @@ public class AdvController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/deleteAdv")
 	public Map<String, Object> deleteAdv(@RequestParam(required = false) Integer id) throws IOException {
-//		UsersDTO user = (UsersDTO) session.getAttribute("userSession");
 		int result = advService.removeAdv(id);
 		String res = "success";
 		if (result > 0) {
@@ -332,20 +302,6 @@ public class AdvController extends BaseController {
 		}
 		return json;
 	}
-//	@ResponseBody
-//	@RequestMapping(value = "deleteRoom")
-//	public String delRoom(HttpServletRequest request, HttpSession session, @ModelAttribute UsersDTO user,
-//			@ModelAttribute("advDto") AdvertiseDTO advDto, @ModelAttribute("roomDto") RoomDTO roomDto)
-//			throws IOException {
-//		user = (UsersDTO) session.getAttribute("userSession");
-//		advDto = advService.selectAdvByUId(user);
-//		int id = roomService.removeRoom(advDto);
-//		if (id > 0) {
-//			return "Success";
-//		} else {
-//			return "Fail";
-//		}
-//	}
 
 	@ResponseBody
 	@RequestMapping(value = "/bookRoom", method = RequestMethod.POST)

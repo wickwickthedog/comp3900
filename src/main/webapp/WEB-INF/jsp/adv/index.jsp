@@ -132,7 +132,7 @@
 		}
 	})
 	function validateAndCommit() {
-		var room = $("#room").val();
+/* 		var room = $("#room").val();
 		var adult = $("#adult").val();
 		var inputCheckIn = $("#inputCheckIn").val();
 		var inputCheckOut = $("#inputCheckOut").val();
@@ -151,10 +151,9 @@
 		if (inputCheckOut == null || inputCheckOut == "") {
 			$.messager.alert("Warning", "The date of check-out cannot be null");
 			return;
-		}
-		var form = document.getElementById('searchAdvForm');
-		//再次修改input内容
-
+		} */
+/* 		var form = document.getElementById('searchAdvForm');
+ */
 		searchAdv();
 
 	}

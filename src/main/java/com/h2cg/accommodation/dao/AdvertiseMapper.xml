@@ -21,57 +21,59 @@
 		<result column="adv_type" jdbcType="VARCHAR" property="advType" />
 		<result column="property_type" jdbcType="VARCHAR" property="propertyType" />
 	</resultMap>
-	<select id="selectAdv" resultMap="BaseResultMap"
-		parameterType="com.h2cg.accommodation.dto.BookDTO">
+	<select id="selectAdv" resultMap="BaseResultMap" parameterType="com.h2cg.accommodation.dto.BookDTO">
 		SELECT
-			* 
+		*
 		FROM
-			`ADVERTISE` a
-			LEFT JOIN ROOM r ON a.id = r.adv_id
-			LEFT JOIN BOOK b ON r.id = b.room_id 
+		`ADVERTISE` a
+		LEFT JOIN ROOM r ON a.id = r.adv_id
+		LEFT JOIN BOOK b ON r.id = b.room_id
 		WHERE
-			a.id IN (
-			SELECT
-				r.adv_id 
-			FROM
-				ROOM r 
-			WHERE
-				r.id NOT IN (
-				SELECT
-					b.room_id 
-				FROM
-					BOOK b
-					LEFT JOIN ROOM r ON r.id = b.room_id 
-				WHERE
-					b.stay_end &gt;=
-				#{stayBegin,jdbcType=TIMESTAMP} 
-				and b.stay_begin &lt;=
-				#{stayEnd,jdbcType=TIMESTAMP} GROUP BY b.room_id ) GROUP BY r.adv_id HAVING count( * ) &gt;= #{room.adv.bedroom} 
-			) 
-			AND a.id IN (
-			SELECT
-				r.adv_id
-			FROM
-				ROOM r 
-			WHERE
-				r.id NOT IN (
-				SELECT
-					b.room_id 
-				FROM
-					BOOK b
-					LEFT JOIN ROOM r ON r.id = b.room_id 
-				WHERE
-					b.stay_end &gt;=
-				#{stayBegin,jdbcType=TIMESTAMP} 
-				and b.stay_begin &lt;=
-				#{stayEnd,jdbcType=TIMESTAMP} GROUP BY b.room_id 
-				) 	GROUP BY
-			r.adv_id  HAVING sum( r.max_people ) &gt;= #{room.adv.maxPeople}
-		
-			)
+		a.id IN (
+		SELECT
+		r.adv_id
+		FROM
+		ROOM r
+		WHERE
+		r.id NOT IN (
+		SELECT
+		b.room_id
+		FROM
+		BOOK b
+		LEFT JOIN ROOM r ON
+		r.id = b.room_id
+		WHERE
+		b.stay_end &gt;=
+		#{stayBegin,jdbcType=TIMESTAMP}
+		and b.stay_begin &lt;=
+		#{stayEnd,jdbcType=TIMESTAMP} GROUP BY b.room_id ) GROUP BY r.adv_id HAVING count( * ) &gt;=
+		#{room.adv.bedroom}
+		)
+		AND a.id IN (
+		SELECT
+		r.adv_id
+		FROM
+		ROOM r
+		WHERE
+		r.id NOT IN (
+		SELECT
+		b.room_id
+		FROM
+		BOOK b
+		LEFT JOIN ROOM r ON r.id = b.room_id
+		WHERE
+		b.stay_end &gt;=
+		#{stayBegin,jdbcType=TIMESTAMP}
+		and
+		b.stay_begin &lt;=
+		#{stayEnd,jdbcType=TIMESTAMP} GROUP BY b.room_id
+		) GROUP BY
+		r.adv_id HAVING sum( r.max_people ) &gt;= #{room.adv.maxPeople}
+
+		)
 
 		<if test="room.adv.city != null and room.adv.city !='' ">
-			and address like CONCAT('%',#{room.adv.city},'%') 
+			and address like CONCAT('%',#{room.adv.city},'%')
 		</if>
 		<if test="room.adv.propertyType != null and room.adv.propertyType !='' ">
 			and property_type like #{room.adv.propertyType}
@@ -79,24 +81,24 @@
 		<if test="room.adv.advType != null and room.adv.advType !='' ">
 			and adv_type like #{room.adv.advType}
 		</if>
-		 GROUP BY a.id ORDER BY MIN(r.rental) asc
+		GROUP BY a.id ORDER BY MIN(r.rental) asc
 
 
 	</select>
-
-	<select id="selectAdvById" resultMap="BaseResultMap"
-		parameterType="com.h2cg.accommodation.dto.AdvertiseDTO">
+	<select id="selectAdvByAddress" resultMap="BaseResultMap" parameterType="com.h2cg.accommodation.dto.AdvertiseDTO">
+		select *
+		from ADVERTISE where address like CONCAT('%',#{room.adv.city},'%')
+	</select>
+	<select id="selectAdvById" resultMap="BaseResultMap" parameterType="com.h2cg.accommodation.dto.AdvertiseDTO">
 		select *
 		from ADVERTISE where id = #{id}
 	</select>
-	
-	<select id="selectAdvByUserId" resultMap="BaseResultMap"
-		parameterType="java.lang.Integer">
-		select * from ADVERTISE  where user_id = #{id}
+
+	<select id="selectAdvByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select * from ADVERTISE where user_id = #{id}
 	</select>
-	<select id="selectByAddr" resultMap="BaseResultMap"
-		parameterType="com.h2cg.accommodation.dto.AdvertiseDTO">
-		select * 
+	<select id="selectByAddr" resultMap="BaseResultMap" parameterType="com.h2cg.accommodation.dto.AdvertiseDTO">
+		select *
 		from ADVERTISE where address = #{address}
 	</select>
 	<delete id="deleteById" parameterType="java.lang.Integer">
@@ -122,12 +124,13 @@
 		#{longitude,jdbcType=DOUBLE},
 		#{latitude,jdbcType=DOUBLE},
 		#{time,jdbcType=TIMESTAMP},
-		#{bedroom,jdbcType=INTEGER}, #{bathroom,jdbcType=INTEGER},
+		#{bedroom,jdbcType=INTEGER},
+		#{bathroom,jdbcType=INTEGER},
 		#{maxPeople,jdbcType=INTEGER},
 		#{advType,jdbcType=VARCHAR},
 		#{propertyType,jdbcType=VARCHAR})
 	</insert>
-	<insert id="insertSelective" parameterType="com.h2cg.accommodation.dto.AdvertiseDTO" keyProperty="id" useGeneratedKeys="true" >
+	<insert id="insertSelective" parameterType="com.h2cg.accommodation.dto.AdvertiseDTO" keyProperty="id" useGeneratedKeys="true">
 		insert into ADVERTISE
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -236,9 +239,9 @@
 			</if>
 		</trim>
 	</insert>
-<update id="updateRmNum" parameterType="java.lang.Integer">
-	UPDATE ADVERTISE a set bedroom = #{bedroom}, max_people = #{capacity}
-	WHERE id=#{advId}
-</update>
+	<update id="updateRmNum" parameterType="java.lang.Integer">
+		UPDATE ADVERTISE a set bedroom = #{bedroom}, max_people = #{capacity}
+		WHERE id=#{advId}
+	</update>
 
 </mapper>

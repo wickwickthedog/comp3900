@@ -23,19 +23,22 @@ public interface AdvertiseDAO {
 //	int updateByDTOSelective(@Param("DTO") AdvertiseDTO DTO);
 //
 //	int updateByDTO( @Param("DTO") AdvertiseDTO DTO);
-	
+
 	List<AdvertiseDTO> selectAdv(BookDTO bookDto);
 
+	List<AdvertiseDTO> selectAdvByAddress(BookDTO bookDto);
+
 	AdvertiseDTO selectAdvById(AdvertiseDTO advDto);
-	
+
 	int insert(AdvertiseDTO record);
 
-	AdvertiseDTO selectByAddr(@Param("address")String addr);
+	AdvertiseDTO selectByAddr(@Param("address") String addr);
 
 	int deleteById(Integer id);
-	
+
 	List<AdvertiseDTO> selectAdvByUserId(Integer id);
-	
-	int updateRmNum(@Param("advId")Integer advId,@Param("bedroom")Integer bedroom,@Param("capacity")Integer capacity);
+
+	int updateRmNum(@Param("advId") Integer advId, @Param("bedroom") Integer bedroom,
+			@Param("capacity") Integer capacity);
 
 }

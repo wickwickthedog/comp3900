@@ -48,11 +48,7 @@ public class UserController extends BaseController {
 	public String toUserRegister(@ModelAttribute UsersDTO userDTO) {
 		return "user/userRegister";
 	}
-//	@RequestMapping("admin/toSearchUser")
-//	public String toSearchUser() {
-//
-//		return "/admin/searchUserView";
-//	}
+
 
 	@RequestMapping("/toSearchUser2")
 	public String toSearchUser2() {
@@ -60,17 +56,6 @@ public class UserController extends BaseController {
 		return "user/searchUserView2";
 	}
 
-//	@RequestMapping("admin/toUserActivity")
-//	public String toUserActivity(@ModelAttribute UsersDTO userDTO, Model model) {
-//		userDTO.setPageSize(1);
-//		List<UsersDTO> userList = userService.searchUserByIdOrName(userDTO);
-//		if (userList.size() != 0) {
-//			userDTO = userService.searchUserByIdOrName(userDTO).get(0);
-//			model.addAttribute("user", userDTO);
-//
-//		}
-//		return "/admin/userActivityView";
-//	}
 
 	@RequestMapping("/toUpdateUser")
 	public String toUpdateUser(@ModelAttribute UsersDTO user, Model model, HttpSession session) {
@@ -81,99 +66,13 @@ public class UserController extends BaseController {
 
 	@RequestMapping("/toUserProfile")
 	public String toUserProfile(@ModelAttribute UsersDTO user, Model model, HttpSession session) {
-//		user.setPageSize(1);
-//		user = userService.searchUserByIdOrName(user).get(0);
+
 		user = (UsersDTO) session.getAttribute("userSession");
 		model.addAttribute("user", user);
 		return "user/userProfile";
 	}
 
 	/*-------------------------      Methods       -------------------------------- */
-//	@ResponseBody
-//	@RequestMapping(value = "/searchUser", method = RequestMethod.POST)
-//	public Map<String, Object> searchUser(HttpServletRequest request, @ModelAttribute("userUI") UsersDTO userDTO,
-//			@RequestParam(required = false, defaultValue = "1") Integer page, Model model) throws Exception {
-//		// RequestContext requestContext = new RequestContext(request);
-//		String res = "success";
-//		if (userDTO.getPageSize() == 0) {
-//			userDTO.setPageSize(10);
-//		}
-//		userDTO.setRecordStart((page - 1) * userDTO.getPageSize());
-//		int total = userService.countUser(userDTO);
-//		List<UsersDTO> userList = userService.searchUserByIdOrName(userDTO);
-//		for (UsersDTO user : userList) {
-//			// user.setDobFormat(dob);
-//			switch (user.getValid()) {
-//			case 0:
-//				user.setStatus("Invalid");
-//				break;
-//			case 1:
-//				user.setStatus("Active");
-//				break;
-//			}
-//		}
-//		if (userList.size() == 0 || userList == null) {
-//			res = "failed";
-//		}
-//		this.setListJson(res, userList, total);
-//		return json;
-//	}
-//	@ResponseBody
-//	@RequestMapping(value = "admin/searchUser", method = RequestMethod.POST)
-//	public Map<String, Object> searchUser2(HttpServletRequest request, @ModelAttribute("userUI") UsersDTO userDTO,
-//			@RequestParam(required = false, defaultValue = "1") Integer page, Model model) throws Exception {
-//		// RequestContext requestContext = new RequestContext(request);
-//		String res = "success";
-//		if (userDTO.getPageSize() == 0) {
-//			userDTO.setPageSize(10);
-//		}
-//		userDTO.setRecordStart((page - 1) * userDTO.getPageSize());
-//		int total = userService.countUser(userDTO);
-//		List<UsersDTO> userList = userService.searchUserByIdOrName(userDTO);
-//		for (UsersDTO user : userList) {
-//			// user.setDobFormat(dob);
-//			switch (user.getBan()) {
-//			case 0:
-//				user.setBanName("Invalid");
-//				break;
-//			case 1:
-//				user.setBanName("Active");
-//				break;
-//			}
-//		}
-//		if (userList.size() == 0 || userList == null) {
-//			res = "failed";
-//		}
-//		this.setListJson(res, userList, total);
-//		return json;
-//	}
-//
-//	@ResponseBody
-//	@RequestMapping(value = "admin/changeUserStatus", method = RequestMethod.POST)
-//	public Map<String, Object> changeUserStatus(HttpServletRequest request, @ModelAttribute("userUI") UsersDTO user) {
-//		user.setBan(1 - user.getBan());
-//		if (userService.updateUser(user) > 0) {
-//			this.setTitleJson("success", "User status has been changed successfully", "Success");
-//		} else {
-//			this.setTitleJson("failed", "Fail to change user status", "Failue");
-//		}
-//		return json;
-//	}
-//
-//	@ResponseBody
-//	@RequestMapping(value = "admin/searchUserActivity", method = RequestMethod.POST)
-//	public Map<String, Object> searchUserActivity(HttpServletRequest request, @ModelAttribute("userUI") UsersDTO userDTO,
-//			Model model) throws Exception {
-//		// RequestContext requestContext = new RequestContext(request);
-//		String res = "success";
-//		// int total = userService.countUser(userDTO);
-//		List<UserActivityDTO> userActList = userService.searchUserActivity(userDTO);
-//		if (userActList.size() == 0 || userActList == null) {
-//			res = "failed";
-//		}
-//		this.setListJson(res, userActList, userActList.size());
-//		return json;
-//	}
 
 	@RequestMapping(value = "userLogin", method = RequestMethod.POST)
 	public String userLogin(@ModelAttribute UsersDTO userDto, Model model, HttpSession session,
@@ -230,18 +129,11 @@ public class UserController extends BaseController {
 	public Map<String, Object> registerUser(HttpServletRequest request, @ModelAttribute("userDTO") UsersDTO user)
 			throws IOException {
 		user.setTime(new Date());
-		// user.setPassword(EncoderByMd5(user.getPassword()));
-//		if (photo != null) {
-//			InputStream is = photo.get(0).getInputStream();
-//			byte[] photoData = new byte[(int) photo.get(0).getSize()];
-//			is.read(photoData);
-////			user.setPhoto_data(photoData);
-//		}
+
 		user.setValid(1);
 		int id = userService.addUser(user);
 		if (id > 0) {
-//			String email = user.getEmail();
-//			userService.processregister(id, email);// 发邮箱激活
+
 			this.setTitleJson("success", "Your account has been registered successfully", "Success");
 		} else {
 			this.setTitleJson("failed", "Fail to register", "Failure");
@@ -272,38 +164,6 @@ public class UserController extends BaseController {
 
 		return json;
 	}
-
-//	@RequestMapping(value = "/getImage", method = RequestMethod.GET)
-//	public void getImage(@RequestParam("id") int id, HttpServletRequest request, HttpServletResponse response,
-//			Model model) throws IOException {
-//		UsersDTO user = new UsersDTO();
-//		user.setId(id);
-//		user.setPageSize(1);
-//		user = userService.searchUserByIdOrName(user).get(0);
-//		byte[] data = user.getPhoto_data();
-//		response.setContentType("img/jpeg");
-//		response.setCharacterEncoding("utf-8");
-//		if(data != null) {
-//			data = scaleImage(data, 300, 300);
-//			try {
-//
-//				OutputStream outputStream = response.getOutputStream();
-//				InputStream in = new ByteArrayInputStream(data);
-//
-//				int len = 0;
-//				byte[] buf = new byte[1024];
-//				while ((len = in.read(buf, 0, 1024)) != -1) {
-//					outputStream.write(buf, 0, len);
-//				}
-//				outputStream.close();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//
-//
-//	}
 
 	public static byte[] scaleImage(byte[] data, int width, int height) throws IOException {
 		BufferedImage buffered_oldImage = ImageIO.read(new ByteArrayInputStream(data));
